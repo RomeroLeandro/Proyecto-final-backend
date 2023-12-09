@@ -9,35 +9,43 @@ const Cart = require("../../models/cart.model");
 
 passport.use(
   "login",
-  new LocalStrategy(async (email, password, done) => {
-    try {
-      console.log("Intento de inicio de sesión para el correo electrónico:", email);
+  new LocalStrategy(
+    { usernameField: "email" },
+    async (email, password, done) => {
+      try {
+        console.log(
+          "Login intent for email:",
+          email
+        );
 
-      const user = await User.findOne({ email });
-      if (!user) {
-        console.log("Correo electrónico no encontrado:", email);
-        return done(null, false, { message: "Incorrect username." });
+        const user = await User.findOne({ email });
+        if (!user) {
+          console.log("Email not found:", email);
+          return done(null, false, { message: "Incorrect username." });
+        }
+
+        console.log("User found:", user);
+
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+          console.log("Incorrect password for user:", user);
+          return done(null, false, { message: "Incorrect password." });
+        }
+
+        console.log("Valid password for the user:", user);
+
+        const token = jwt.sign({ user }, env.session.secret, {
+          expiresIn: "1h",
+        });
+        console.log("Token generated for the user:", user);
+
+        return done(null, { user: user.toObject(), token });
+      } catch (error) {
+        console.error("Error during login:", error);
+        return done(error);
       }
-
-      console.log("Usuario encontrado:", user);
-
-      const isPasswordValid = await bcrypt.compare(password, user.password);
-      if (!isPasswordValid) {
-        console.log("Contraseña incorrecta para el usuario:", user);
-        return done(null, false, { message: "Incorrect password." });
-      }
-
-      console.log("Contraseña válida para el usuario:", user);
-
-      const token = jwt.sign({ user }, env.session.secret, { expiresIn: '1h' });
-      console.log("Token generado para el usuario:", user);
-
-      return done(null, { user, token });
-    } catch (error) {
-      console.error("Error durante el inicio de sesión:", error);
-      return done(error);
     }
-  })
+  )
 );
 
 passport.use(
@@ -48,7 +56,7 @@ passport.use(
       try {
         const user = await User.findOne({ email: username });
         if (user) {
-          console.log("Usuario existente");
+          console.log("Existing user");
           return done(null, false);
         }
 
@@ -68,7 +76,9 @@ passport.use(
         const newCart = await createCart();
         newUser.cart = newCart._id;
         await newUser.save();
-        const token = jwt.sign({ newUser }, env.session.secret, { expiresIn: '1h' });
+        const token = jwt.sign({ newUser }, env.session.secret, {
+          expiresIn: "1h",
+        });
         return done(null, { newUser, token });
       } catch (e) {
         return done(e);
@@ -106,7 +116,9 @@ passport.use(
         newUser.cart = newCart._id;
         await newUser.save();
 
-        const token = jwt.sign({ newUser }, env.session.secret, { expiresIn: '1h' });
+        const token = jwt.sign({ newUser }, env.session.secret, {
+          expiresIn: "1h",
+        });
         return done(null, { newUser, token });
       } catch (error) {
         return done(error);
