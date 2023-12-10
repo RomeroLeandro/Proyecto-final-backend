@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>All products</title>
+</head>
+<body>
+  <h1>All products</h1>
+  {{#if products}}
+    <ul>
+      {{#each products}}
+        <li>
+          <a href="/api/products/{{this._id}}">
+            {{this.title}} - Price: {{this.price}}
+          </a>
+        </li>
+      {{/each}}
+    </ul>
+  {{else}}
+    <p>No hay productos disponibles.</p>
+  {{/if}}
+</body>
+</html>
