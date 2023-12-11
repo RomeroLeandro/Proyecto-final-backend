@@ -3,6 +3,7 @@ const passport = require("passport");
 const sessionRouter = express.Router();
 
 sessionRouter.post("/login", (req, res, next) => {
+  console.log(req.body);
   passport.authenticate("login", { session: false }, (err, user, info) => {
     if (err) {
       return res.status(500).json({ message: "Internal Server Error" });
@@ -10,14 +11,20 @@ sessionRouter.post("/login", (req, res, next) => {
     if (!user) {
       return res.status(401).json({ message: info.message || "Unauthorized" });
     }
-    req.logIn(user, { session: false }, (error) => {
-      if (error) {
-        return res.status(500).json({ message: "Internal Server Error" });
-      }
-      res.json({ user: user.user, token: user.token });
+
+    // Genera el token y establece la cookie en la respuesta
+    const token = user.token; // Asegúrate de que el token esté disponible en user
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      // Otras opciones de configuración de la cookie aquí
     });
+
+    // Envía la respuesta al cliente
+    return res.json({ user: user.user, token: user.token });
   })(req, res, next);
 });
+
 
 sessionRouter.post(
   "/register",

@@ -13,35 +13,24 @@ passport.use(
     { usernameField: "email" },
     async (email, password, done) => {
       try {
-        console.log(
-          "Login intent for email:",
-          email
-        );
 
         const user = await User.findOne({ email });
         if (!user) {
-          console.log("Email not found:", email);
           return done(null, false, { message: "Incorrect username." });
         }
 
-        console.log("User found:", user);
-
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
-          console.log("Incorrect password for user:", user);
           return done(null, false, { message: "Incorrect password." });
         }
 
-        console.log("Valid password for the user:", user);
 
         const token = jwt.sign({ user }, env.session.secret, {
-          expiresIn: "1h",
+          expiresIn: "1m",
         });
-        console.log("Token generated for the user:", user);
 
         return done(null, { user: user.toObject(), token });
       } catch (error) {
-        console.error("Error during login:", error);
         return done(error);
       }
     }
