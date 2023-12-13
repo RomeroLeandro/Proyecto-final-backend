@@ -1,7 +1,7 @@
 const productDAO = require('../dao/product.dao');
 
-const getAllProducts = () => {
-  return productDAO.getAllProducts();
+const getAllProducts = async (limit) => {
+  return productDAO.getAllProducts(limit);
 };
 
 const getProductById = (productId) => {

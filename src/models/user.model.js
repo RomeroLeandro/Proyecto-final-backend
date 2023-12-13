@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
     unique: true,
   },
   age: Number,
-  password: { type: String, required: true },
+  password: { type: String, required: false },
   createdAt: { type: Date, default: Date.now },
   documents: [
     {

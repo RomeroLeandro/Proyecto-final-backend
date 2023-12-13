@@ -9,6 +9,7 @@ sessionViewRouter.get('/login', (req, res, next) => {
     }
     res.render('login');
   });
+
   
   sessionViewRouter.get('/register', (req, res, next) => {
     const token = req.cookies.token;
