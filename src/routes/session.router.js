@@ -4,11 +4,12 @@ const sessionRouter = express.Router();
 const jwt = require("jsonwebtoken");
 const env = require("../config/env/env");
 const User = require("../models/user.model");
-const userController = require("../controllers/user.controller");
 const githubController = require("../controllers/github.controller");
 
-sessionRouter.post("/login", userController.login);
-sessionRouter.post("/register", userController.register);
+
+const expirationTime = new Date(Date.now() + 60 * 60 * 1000);
+// sessionRouter.post("/login", userController.login);
+// sessionRouter.post("/register", userController.register);
 sessionRouter.get("/github", githubController);
 
 sessionRouter.get("/logout", (req, res) => {
@@ -33,6 +34,7 @@ sessionRouter.get(
       // Establece una cookie en la respuesta con el token generado
       res.cookie("token", token, {
         httpOnly: true,
+        expires: expirationTime,
         // Otras opciones de configuración de la cookie aquí (como secure: true para HTTPS)
       });
 
@@ -46,32 +48,52 @@ sessionRouter.get(
   }
 );
 
-// sessionRouter.post("/login", (req, res, next) => {
-//   passport.authenticate("login", { session: false }, (err, user, info) => {
-//     if (err) {
-//       return res.status(500).json({ message: "Internal Server Error" });
-//     }
-//     if (!user) {
-//       return res.status(401).json({ message: info.message || "Unauthorized" });
-//     }
-//     const token = user.token;
+sessionRouter.post("/login", (req, res, next) => {
+  const isFromView = req.body.isFromView;
+  passport.authenticate("login", { session: false }, (err, user, info) => {
+    if (err) {
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
+    if (!user) {
+      return res.status(401).json({ message: info.message || "Unauthorized" });
+    }
+    const token = user.token;
 
-//     res.cookie("token", token, {
-//       httpOnly: true,
-//     });
+    res.cookie("token", token, {
+      httpOnly: true,
+      expires: expirationTime,
+    });
+    if(isFromView){
+      return res.json({ user: user.user, token: user.token });
+      
+    }
+    return res.redirect("/products");
+  })(req, res, next);
+});
 
-//     return res.json({ user: user.user, token: user.token });
-//   })(req, res, next);
-// });
 
+sessionRouter.post(
+  
+  "/register",
+  passport.authenticate("register", { session: false }),
+  (req, res) => {
+    const isFromView = req.body.isFromView;
+    // Si la autenticación es exitosa, obtén el token del usuario registrado
+    const token = req.user.token;
 
-// sessionRouter.post(
-//   "/register",
-//   passport.authenticate("register", { session: false }),
-//   (req, res) => {
-//     res.json({ user: req.user.newUser, token: req.user.token });
-//   }
-// );
+    // Configura la cookie con el token
+    res.cookie("token", token, {
+      httpOnly: true,
+      expires: expirationTime,
+    });
+
+    if(isFromView){
+      return res.json({ user: req.user.user, token: req.user.token });
+    }
+    return res.redirect("/products");
+  }
+);
+
 
 // sessionRouter.get(
 //   "/github",

@@ -7,6 +7,7 @@ const sessionRouter = require('./src/routes/session.router');
 const env = require('./src/config/env/env');
 const passport = require('./src/config/passport/passport.config');
 const cookieParser = require('cookie-parser');
+const path = require('path');
 
 const productViewRouter = require('./src/routes/product.view.router');
 const sessionViewRouter = require('./src/routes/session.view.router');
@@ -20,6 +21,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
 app.use(cookieParser());
+app.use('/public', express.static(path.join(__dirname, 'public'),
+setHeaders = (res, filePath) => {
+    if (filePath.endsWith('.css')) {
+        res.setHeader('Content-Type', 'text/css');
+    } }
+));
 app.use('/api/products', productRouter);
 app.use('/api/carts', cartRouter);
 app.use('/api/session', sessionRouter);
