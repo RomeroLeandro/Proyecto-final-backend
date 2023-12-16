@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
+
 const userSchema = new mongoose.Schema({
-    name: String,
+  name: String,
   lastName: String,
   email: {
     type: String,
@@ -12,8 +14,8 @@ const userSchema = new mongoose.Schema({
   documents: [
     {
       name: String,
-      reference: String
-    }
+      reference: String,
+    },
   ],
   admin: {
     type: Boolean,
@@ -21,13 +23,24 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['admin', 'premium', 'user'],
-    default: 'user',
+    enum: ["admin", "premium", "user"],
+    default: "user",
   },
   cart: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "cart",
   },
+  resetPasswordToken: String,
+  resetPasswordTokenExp: Date,
+});
+
+userSchema.pre("save", async function (next) {
+  const user = this;
+  if (user.isModified("password")) {
+    const hashedPassword = await bcrypt.hash(user.password, 10);
+    user.password = hashedPassword;
+  }
+  next();
 });
 
 module.exports = mongoose.model("users", userSchema);

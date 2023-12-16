@@ -1,24 +1,35 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>All products</title>
-</head>
-<body>
+
   {{> header}}
   <h1>All products</h1>
   {{#if products}}
-    <ul>
-      {{#each products}}
-        <li>
-          <a href="/products/{{this._id}}">
-            {{this.title}} - Price: {{this.price}}
-          </a>
-        </li>
+  <div class="card-container">
+{{#each products}}
+
+        <div class="card">
+
+ <div class="image"></div>
+  <div class="content">
+    <a href="#">
+      <span class="title">
+        {{this.title}}
+      </span>
+    </a>
+
+    <p class="desc">
+      {{this.description}}
+    </p>
+
+    <a class="action" href="/products/{{this._id}}">
+      Details
+      <span aria-hidden="true">
+        →
+      </span>
+    </a>
+  </div>
+</div>
       {{/each}}
-    </ul>
+  </div>
+      
   {{else}}
     <p>No hay productos disponibles.</p>
   {{/if}}
-</body>
-</html>
