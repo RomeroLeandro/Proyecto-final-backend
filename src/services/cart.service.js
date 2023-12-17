@@ -26,7 +26,7 @@ const addProductToCart = async (cartId, productId, quantity = 1) => {
     throw new Error("Cart not found");
   }
   const existingProductIndex = cart.products.findIndex(
-    (product) => product.productId.toString() === productId
+    (product) => product.productId && product.productId.toString() === productId
   );
 
   if (existingProductIndex !== -1) {

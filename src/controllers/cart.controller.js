@@ -61,6 +61,7 @@ const addProductToCart = async (req, res) => {
     );
     res.json(result);
   } catch (err) {
+    console.log(err);
     res.status(500).json({ message: err.message });
   }
 };
