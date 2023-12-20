@@ -11,6 +11,7 @@ const path = require("path");
 
 const productViewRouter = require("./src/routes/product.view.router");
 const sessionViewRouter = require("./src/routes/session.view.router");
+const cartViewRouter = require("./src/routes/cart.view.router");
 const app = express();
 
 app.engine(
@@ -60,8 +61,9 @@ app.use(
 app.use("/api/products", productRouter);
 app.use("/api/carts", cartRouter);
 app.use("/api/session", sessionRouter);
-app.use("/products", productViewRouter);
-app.use("/session", sessionViewRouter);
+// app.use("/products", productViewRouter);
+// app.use("/session", sessionViewRouter);
+// app.use("/carts", cartViewRouter);
 
 const PORT = env.url.port || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -40,7 +40,7 @@ productViewRouter.get("/", async (req, res) => {
 
         const transformProducts = products.docs.map((product) => {
           return {
-            id: product._id,
+            _id: product._id,
             title: product.title,
             price: product.price,
             stock: product.stock,
@@ -61,10 +61,10 @@ productViewRouter.get("/", async (req, res) => {
           currentUser,
         });
       } else {
-        res.redirect("/login");
+        res.redirect("/session/login");
       }
     } else {
-      res.redirect("/login");
+      res.redirect("/session/login");
     }
   } catch (error) {
     console.log(error);

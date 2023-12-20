@@ -84,7 +84,7 @@
           →
         </span>
       </a>
-      <form action="/api/carts/{{this.cart}}/products/{{this.id}}" method="POST">
+      <form action="/api/carts/{{this.cart}}/products/{{this._id}}" method="POST">
         <label for="quantity">Cantidad:</label>
         <input type="number" name="quantity" id="quantity" value="1" min="1">
         <button type="submit">Agregar al carrito</button>

@@ -46,10 +46,12 @@ const deleteCart = async (req, res) => {
 };
 
 const addProductToCart = async (req, res) => {
+  const isFromView = req.body.isFromView;
   try {
     const { id, pid } = req.params;
     const { quantity } = req.body;
-
+    console.log("Product ID:", pid); // Verificar el ID del producto
+    console.log("Cart ID:", id);
     if (!id || !pid) {
       return res.status(400).json({ message: "Missing required data" });
     }
@@ -59,13 +61,16 @@ const addProductToCart = async (req, res) => {
       pid,
       Number(quantity) || 1
     );
-    res.json(result);
+
+    if (isFromView) {
+      res.json(result);
+    }
+    res.redirect(`/carts/${id}`);
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: err.message });
   }
 };
-
 module.exports = {
   getAllCarts,
   getCartById,

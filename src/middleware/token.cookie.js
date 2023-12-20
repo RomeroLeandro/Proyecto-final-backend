@@ -1,43 +1,46 @@
 const jwt = require("jsonwebtoken");
 const env = require("../config/env/env");
+const User = require("../models/user.model");
 
-// function verifyAccessToken(req, res, next) {
-//   const token = req.cookies.token;
-//   if (!token) {
-// req.userAuth = false;
-//     return next();
-//   }
+const authMiddleware = async (req, res, next) => {
+  try {
+    const token = req.cookies.token;
 
-//   jwt.verify(token, env.session.secret, (err, user) => {
-//     if (err) {
-//       // En caso de error al verificar el token, redirige a la página de inicio de sesión
-//       req.userAuth = false;
-//       return next();
-//     }
-//     req.userAuth = true;
-//     next();
+    if (!token) {
+      return res
+        .status(401)
+        .json({ message: "Acceso denegado. Token no proporcionado." });
+    }
 
-//   });
-// }
+    const decoded = jwt.verify(token, env.session.secret);
 
-const getUserFromToken = (req, res, next) => {
-  const token = req.cookies.token;
+    console.log("Decoded token:", decoded); // Verificar el contenido del token decodificado
 
-  if (token) {
-    jwt.verify(token, env.session.secret, (err, decodedToken) => {
-      if (err) {
-        console.log(err);
-        req.user = null;
-        next();
-      } else {
-        req.user = decodedToken.userId;
-        next();
-      }
-    });
-  } else {
-    req.user = null;
+    // Verificar si el token contiene la información del usuario
+    if (!decoded || !decoded.userId) {
+      return res.status(401).json({ message: "Token inválido o incompleto." });
+    }
+
+    // Obtener al usuario desde la base de datos utilizando el ID del token
+    const user = await User.findById(decoded.userId);
+
+    console.log("User found:", user); // Verificar el usuario obtenido
+
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado." });
+    }
+
+    // Establecer el usuario en el objeto de solicitud para su uso posterior
+    req.user = user;
+
+    // Llamar a next() para pasar al siguiente middleware o ruta
     next();
+  } catch (error) {
+    console.log("Error al verificar el token:", error); // Verificar el error en la verificación del token
+    return res
+      .status(401)
+      .json({ message: "Acceso denegado. Error al verificar el token." });
   }
 };
 
-module.exports = getUserFromToken;
+module.exports = authMiddleware;
