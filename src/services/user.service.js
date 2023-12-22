@@ -1,72 +1,71 @@
-const { transportMail } = require("../config/node.mailer");
-const UserRepository = require("../repositories/user.repository");
+const { transportGmail } = require("../config/node.mailer");
+const UsersRepository = require("../repositories/user.repository");
 const { createHash, isValidPassword } = require("../utils/password.hash");
-
-class UserService {
+class UsersService {
   constructor() {
-    this.userRepository = new UserRepository();
+    this.repository = new UsersRepository();
   }
 
   async getUsers(params) {
-    return this.userRepository.getUsers(params);
+    return this.repository.getUsers(params);
   }
 
-  async getUserById(id) {
-    return this.userRepository.getUserById(id);
+  async getUserById(uid) {
+    return this.repository.getUserById(uid);
   }
 
   async getUserByFilter(filter) {
-    return this.userRepository.getUserByFilter(filter);
+    return this.repository.getUserByFilter(filter);
   }
 
-  async addToMyCart(userId, productId) {
-    return this.userRepository.addToMyCart(userId, productId);
+  async addToMyCart(uid, pid) {
+    return this.repository.addToMyCart(uid, pid);
   }
 
   async createUser(data) {
-    return this.userRepository.createUser(data);
+    return this.repository.createUser(data);
   }
 
-  async resetPassword(userId, password) {
-    const user = await this.userRepository.getUserById(userId);
+  async resetPassword(uid, password) {
+    const user = await this.repository.getUserById(uid);
 
-    if (isValidPassword(password, user.password)) {
-      throw new Error("New password must be different from the old one");
-    }
+    if (isValidPassword(password, user.password))
+      throw new Error("New Password cannot be same as old one");
 
     const newPassword = createHash(password);
-    return this.userRepository.resetPassword(userId, newPassword);
+    return this.repository.resetPassword(uid, newPassword);
   }
 
-  async updateUserRole(userId, newRole) {
+  async updateUserRole(uid, newRole) {
     const ROLE_PREMIUM = "PREMIUM";
     try {
-      const user = await this.userRepository.getUserById(userId);
-      if (user.role === newRole) {
-        throw new Error("User already has this role");
-      }
-      if (user.role === ROLE_PREMIUM) {
+      const user = await this.repository.getUserById(uid);
+      if (!user) throw new Error("User not found");
+
+      if (user.role === newRole) throw new Error("Already has that role");
+
+      if (newRole === ROLE_PREMIUM) {
         const requiredDocuments = [
           `${uid}_Identificacion`,
           `${uid}_Comprobante de domicilio`,
           `${uid}_Comprobante de estado de cuenta`,
         ];
 
+        //el siguiente array contendrá los documentos que están en requiredDocuments pero no en user.documents
         const missingDocuments = requiredDocuments.filter(
-          (document) =>
-            !user.documents.some((userDoc) => userDoc.name === document)
+          (doc) => !user.documents.some((userDoc) => userDoc.name === doc)
         );
 
+        //si hay documentos faltantes se procede a
         if (missingDocuments.length > 0) {
-          const splitDocument = requiredDocuments.map((document) => {
-            const [uid, name] = document.split("_");
-            return { uid, name };
+          const splitDocuments = requiredDocuments.map((document) => {
+            const [id, type] = document.split("_");
+            return { id, type };
           });
 
-          const missingTypes = splitDocument
-            .filter((document) =>
-              missingDocuments.includes(`${doc.id}_${doc.type}`)
-            )
+          //nuevo array con solo los "tipos" de los archivos que estarían faltando
+          const missingTypes = splitDocuments
+            .filter((doc) => missingDocuments.includes(`${doc.id}_${doc.type}`))
             .map((doc) => doc.type);
 
           const missingDocumentsMessage = `You are missing the following documents: ${missingTypes.join(
@@ -75,61 +74,66 @@ class UserService {
           throw new Error(missingDocumentsMessage);
         }
       }
-      return this.userRepository.updateUserRole(userId, newRole);
+      return this.repository.updateUserRole(uid, newRole);
     } catch (error) {
       throw error;
     }
   }
 
   async updateUserLastConnection(user) {
-    return this.userRepository.updateUserLastConnection(user);
+    return this.repository.updateUserLastConnection(user);
   }
 
-  async updateUserDocuments(userId, documents) {
-    const user = await this.userRepository.getUserById(userId);
-    const userDocuments = user.documents || [];
+  async updateUserDocuments(uid, files) {
+    const user = await this.repository.getUserById(uid);
+    const documentsToUpload = user.documents || [];
 
-    documents.forEach((document) => {
-      const documentName = document.documentName.split("_");
-      userDocuments.push({
-        name: documentName[0],
+    files.forEach((file) => {
+      const fileName = file.filename.split(".");
+      documentsToUpload.push({
+        name: fileName[0],
         reference: `${process.env.BASE_URL}:${process.env.PORT}/img/documents/${file.filename}`,
       });
     });
-    return this.userRepository.updateUserDocuments(userId, userDocuments);
+
+    return this.repository.updateUserDocuments(uid, documentsToUpload);
   }
 
-  async deleteUser(userId) {
-    return this.userRepository.deleteUser(userId);
+  async deleteUser(uid) {
+    return this.repository.deleteUser(uid);
   }
 
   async deleteInactiveUsers() {
     try {
-      const inactiveTime = Date.now();
+      const inactiveTime = new Date();
 
       inactiveTime.setMinutes(inactiveTime.getDay() - 2);
-      const usersToDeleted = await this.userRepository.getUsers({
-        lastConnection: { $lt: inactiveTime },
+      const usersToDelete = await this.repository.getUsers({
+        last_connection: { $lt: inactiveTime },
       });
 
-      if (usersToDeleted.length === 0) throw new Error("No users to delete");
+      if (usersToDelete.length === 0) throw new Error("No users to delete");
 
-      for (const user of usersToDeleted) {
+      for (const user of usersToDelete) {
         if (user.email) {
-          await transportMail.sendMail({
-            from: `Ecormmerce <${process.env.EMAIL_USER}>`,
+          await transportGmail.sendMail({
+            from: `Shop Easy <${process.env.EMAIL_USER}>`,
             to: user.email,
-            subject: "Account deleted",
-            html: `<p>Hi ${user.name} ${user.lastName}, your account has been deleted due to inactivity</p>`,
+            subject: "Cuenta eliminada por inactividad",
+            html: `<div>
+                                    <h1>¡Lo sentimos!</h1>
+                                    <p>${user.first_name} ${user.last_name}, tu cuenta ha sido eliminada por tener una inactividad de dos días o más</p>
+                                </div>`,
             attachments: [],
           });
         }
       }
-      return this.userRepository.deleteInactiveUsers(usersToDeleted);
+
+      return this.repository.deleteInactiveUsers(usersToDelete);
     } catch (error) {
       throw error;
     }
   }
 }
 
-module.exports = UserService;
+module.exports = UsersService;

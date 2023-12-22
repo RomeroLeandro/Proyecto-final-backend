@@ -1,6 +1,6 @@
 const messageModel = require("./models/message.model");
 
-class MessageManagerMongo {
+class MessageManager {
   constructor(io) {
     this.model = messageModel;
     this.io = io;
@@ -9,7 +9,7 @@ class MessageManagerMongo {
   async getMessages() {
     try {
       const messages = await this.model.find();
-      return messages.map((message) => message.toObject());
+      return messages.map((m) => m.toObject());
     } catch (error) {
       throw error;
     }
@@ -21,9 +21,12 @@ class MessageManagerMongo {
         user: user,
         content: content,
       });
-      this.io.emit("new-message", {
+
+      await newMessage.save();
+
+      this.io.emit("newMessage", {
         user: newMessage.user,
-        content: newMessage.content,
+        message: newMessage.content,
         timestamp: newMessage.timestamp,
       });
 
@@ -34,4 +37,4 @@ class MessageManagerMongo {
   }
 }
 
-module.exports = MessageManagerMongo;
+module.exports = MessageManager;

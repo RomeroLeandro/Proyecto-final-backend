@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 
-const userSchema = new mongoose.Schema({
-  name: String,
-  lastName: String,
+const userSchema = mongoose.Schema({
+  first_name: String,
+  last_name: String,
   email: {
     type: String,
     unique: true,
@@ -11,25 +11,34 @@ const userSchema = new mongoose.Schema({
   password: String,
   role: {
     type: String,
-    enum: ["admin", "premium", "user"],
-    default: "user",
+    enum: ["USER", "PREMIUM", "ADMIN"], //para definir un conjunto válido de valores para este campo
+    default: "USER",
   },
   cart: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "carts",
   },
-  createdAt: { type: Date, default: Date.now },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
   documents: {
     type: [
       {
-        name: { type: String, required: true },
-        reference: { type: String, required: true },
+        name: {
+          type: String,
+          required: true,
+        },
+        reference: {
+          type: String,
+          required: true,
+        },
       },
     ],
     default: [],
   },
-  documentUpload: {
-    type: String,
+  documentUploadStatus: {
+    type: Boolean,
     default: false,
   },
   last_connection: {

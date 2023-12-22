@@ -1,34 +1,35 @@
 const ticketModel = require("./models/ticket.model");
 const { v4: uuidv4 } = require("uuid");
 
-class TicketManagerMongo {
+class TicketsManager {
   constructor() {
     this.model = ticketModel;
   }
-  async getTicketById(id) {
+
+  async getOrderById(id) {
     try {
-      const ticket = await ticketModel.findOne({ _id: id });
-      if (!ticket) {
-        throw new Error(`Ticket ${id} not found`);
+      const order = await ticketModel.findOne({ _id: id });
+      if (!order) {
+        throw new Error("Order not found");
       }
-      return ticket;
+      return order;
     } catch (error) {
       throw error;
     }
   }
 
-  async createTicket(ticket) {
+  async createOrder(data) {
     try {
-      const newTicket = await ticketModel.create({
+      const newOrder = await ticketModel.create({
         code: uuidv4(),
-        amount: ticket.amount,
-        purchaser: ticket.purchaser,
+        amount: data.amount,
+        purchaser: data.purchaser,
       });
-      return newTicket;
+      return newOrder;
     } catch (error) {
       throw error;
     }
   }
 }
 
-module.exports = TicketManagerMongo;
+module.exports = TicketsManager;

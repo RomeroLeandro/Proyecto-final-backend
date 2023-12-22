@@ -1,16 +1,16 @@
-const cartDaoMongo = require("../dao/mongo/cart.manager.mongo");
+const cartsDAOMongo = require("../dao/mongo/cart.manager.mongo");
 
-const mapperStorage = {
-  mongo: new cartDaoMongo(),
-  default: new cartDaoMongo(),
+const storageMapper = {
+  mongo: () => new cartsDAOMongo(),
+  default: () => new cartsDAOMongo(),
 };
 
-const getCartsDao = (storage) => {
-  const storageFn = mapperStorage[storage] || mapperStorage.default;
+const getCartsDAO = (storage) => {
+  const storageFn = storageMapper[storage] || storageMapper.default;
 
-  const dao = storageFn;
+  const dao = storageFn();
 
   return dao;
 };
 
-module.exports = { getCartsDao };
+module.exports = { getCartsDAO };

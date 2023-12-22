@@ -1,16 +1,15 @@
-const { getProductsDao } = require("../factories/product.dao.factory");
-
+const { getProductsDAO } = require("../factories/product.dao.factory");
 class ProductRepository {
   constructor() {
-    this.dao = getProductsDao(process.env.STORAGE);
+    this.dao = getProductsDAO(process.env.STORAGE);
   }
 
   async getProducts(filters, query) {
     return this.dao.getProducts(filters, query);
   }
 
-  async getProductById(id) {
-    return this.dao.getProductById(id);
+  async getProductById(pid) {
+    return this.dao.getProductById(pid);
   }
 
   async getProductByCode(code) {
@@ -21,12 +20,12 @@ class ProductRepository {
     return this.dao.addProduct(data);
   }
 
-  async updateProduct(id, data) {
-    return this.dao.updateProduct(id, data);
+  async updateProduct(pid, productData) {
+    return this.dao.updateProduct(pid, productData);
   }
 
-  async deleteProduct(id) {
-    return this.dao.deleteProduct(id);
+  async deleteProduct(pid) {
+    return this.dao.deleteProduct(pid);
   }
 }
 

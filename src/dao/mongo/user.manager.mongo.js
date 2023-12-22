@@ -1,26 +1,28 @@
-const userModel = require("../../models/user.model.mongo");
-const CartService = require("../cart.service");
-const cartService = new CartService();
+const userModel = require("./models/user.model");
+const CartsService = require("../../services/cart.service");
+const cartsService = new CartsService();
 const { createHash } = require("../../utils/password.hash");
 
 class UserManager {
   constructor() {
-    this.userModel = userModel;
+    this.model = userModel;
   }
 
   async getUsers(params) {
     try {
-      const users = await this.userModel.find(params || {});
+      const users = await this.model.find(params || {});
       return users;
     } catch (error) {
       throw error;
     }
   }
 
-  async getUserById(id) {
+  async getUserById(uid) {
     try {
-      const user = this.userModel.findOne({ _id: id });
+      const user = await this.model.findOne({ _id: uid });
+
       if (!user) throw new Error("User not found");
+
       return user;
     } catch (error) {
       throw error;
@@ -29,21 +31,24 @@ class UserManager {
 
   async getUserByFilter(filter) {
     try {
-      const user = this.userModel.findOne(filter);
+      const user = await this.model.findOne(filter);
+
       return user;
     } catch (error) {
       throw error;
     }
   }
 
-  async addToMyCart(userId, productId) {
+  async addToMyCart(uid, pid) {
     try {
-      const user = await this.userModel.findOne({ _id: userId });
-      const cart = await cartService.getCartById(user.cart);
+      const user = await this.model.findOne({ _id: uid });
+
+      const cart = await cartsService.getCartById(user.cart);
+
       if (!cart) {
         throw new Error("Cart not found");
       } else {
-        await cartService.addProductToCart(user.cart, productId);
+        await cartsService.addProductToCart(user.cart, pid);
       }
     } catch (error) {
       throw error;
@@ -52,45 +57,48 @@ class UserManager {
 
   async createUser(data) {
     try {
-      const newCart = await cartService.addCart();
-      const newUser = await this.userModel.create({
-        name: data.name,
+      const newCart = await cartsService.addCart();
+
+      const newUser = await this.model.create({
+        first_name: data.first_name,
         last_name: data.last_name,
         age: parseInt(data.age),
         email: data.email || null,
-        password: data.password ? createHash(data.password) : undefined,
+        password: data.password !== "" ? createHash(data.password) : undefined,
         cart: newCart._id,
       });
+
       return newUser;
     } catch (error) {
       throw error;
     }
   }
 
-  async resetPassword(userId, password) {
+  async resetPassword(uid, password) {
     try {
-      await this.userModel.updateOne({ _id: userId }, { password });
+      await this.model.updateOne({ _id: uid }, { password });
     } catch (error) {
       throw error;
     }
   }
 
-  async updateUserRole(userId, newRole) {
+  async updateUserRole(uid, newRole) {
     try {
-      const user = this.userModel.updateOne({ _id: userId }, { role: newRole });
+      const user = await this.model.updateOne({ _id: uid }, { role: newRole });
       return user;
     } catch (error) {
       throw error;
     }
   }
 
-  async updateLastConnection(user) {
+  async updateUserLastConnection(user) {
     try {
-      const userToUpdate = await this.userModel.findOne({
-        _id: user._id || user._id,
+      const userToUpdate = await this.model.findOne({
+        _id: user.userId || user._id,
       });
       if (!userToUpdate) throw new Error("User not found");
-      await this.userModel.updateOne(
+
+      await this.model.updateOne(
         { _id: user._id || user.userId },
         { last_connection: new Date() }
       );
@@ -99,18 +107,22 @@ class UserManager {
     }
   }
 
-  async updateUserDocument(userId, data) {
+  async updateUserDocuments(uid, updatedDocuments) {
     try {
-      const user = await this.getUserById(userId);
+      const user = await this.getUserById(uid);
+
       const previousDocumentStatus =
         user.documents && user.documents.length > 0;
-      const newDocumentStatus = await this.userModel.updateOne(
-        { _id: userId },
-        { documents: data }
+
+      const newDocumentStatus = await this.model.updateOne(
+        { _id: uid },
+        { documents: updatedDocuments }
       );
-      if (previousDocumentStatus && newDocumentStatus) {
-        await this.userModel.updateOne(
-          { _id: userId },
+
+      if (!previousDocumentStatus && newDocumentStatus) {
+        //si el estado anterior era false y el nuevo true entonces actualizar
+        await this.model.updateOne(
+          { _id: uid },
           { documentUploadStatus: true }
         );
       }
@@ -119,30 +131,35 @@ class UserManager {
     }
   }
 
-  async deleteUser(userId) {
+  async deleteUser(uid) {
     try {
-      const user = await this.getUserById(userId);
-      await cartService.deleteCart(user.cart);
-      await this.userModel.deleteOne({ _id: userId });
+      const user = await this.getUserById(uid);
+
+      await cartsService.deleteCart(user.cart);
+
+      await this.model.deleteOne({ _id: uid });
     } catch (error) {
+      console.log(error);
       throw error;
     }
   }
 
-  async deleteInactiveUsers(userDelete) {
+  async deleteInactiveUsers(usersToDelete) {
     try {
-      const usersIdDeleted = userDelete.map((user) => user._id);
-      if (usersIdDeleted.length === 0) throw new Error("No users to delete");
-      for (const userId of usersIdDeleted) {
-        const user = await this.userModel.findOne({ _id: userId });
+      const usersIdsToDelete = usersToDelete.map((user) => user._id);
+      if (usersToDelete.length === 0)
+        throw new Error("No users in database to delete");
+      for (const userId of usersIdsToDelete) {
+        const user = await this.model.findOne({ _id: userId });
         if (user.cart) {
-          await cartService.deleteCart(user.cart);
+          await cartsService.deleteCart(user.cart);
         }
       }
-      const result = await this.userModel.deleteMany({
-        _id: { $in: usersIdDeleted },
+      const result = await this.model.deleteMany({
+        _id: { $in: usersIdsToDelete },
       });
-      return result.deleteCount;
+
+      return result.deletedCount;
     } catch (error) {
       throw error;
     }

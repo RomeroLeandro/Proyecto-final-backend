@@ -1,6 +1,6 @@
 const cartModel = require("./models/cart.model");
-const TicketManagerMongo = require("./ticket.manager.mongo");
-const ticketManager = new TicketManagerMongo();
+const TicketsManager = require("./ticket.manager.mongo");
+const ticketsManager = new TicketsManager();
 
 class CartManagerMongo {
   constructor() {
@@ -10,18 +10,15 @@ class CartManagerMongo {
   async getCarts() {
     try {
       const carts = await this.model.find();
-      return carts.map((cart) => cart.toObject());
+      return carts.map((c) => c.toObject());
     } catch (error) {
       throw error;
     }
   }
 
-  async getCartById(id) {
+  async getCartById(cid) {
     try {
-      const cart = await this.model.findOne({ _id: id });
-      if (!cart) {
-        throw new Error(`Cart ${id} not found`);
-      }
+      const cart = await this.model.find({ _id: cid });
       return cart;
     } catch (error) {
       throw error;
@@ -37,16 +34,18 @@ class CartManagerMongo {
     }
   }
 
-  async addProductToCart(cartId, productId) {
+  async addProductToCart(cid, pid) {
     try {
-      const cart = await this.model.findById(cartId);
-      const existingProduct = cart.products.findIndex(
-        (product) => product.product._id === productId
+      const cart = await this.model.findById(cid);
+
+      const existingProductInCart = cart.products.findIndex(
+        (p) => p.product._id.toString() === pid
       );
 
-      existingProduct !== -1
-        ? cart.products[existingProduct].quantity++
-        : cart.products.push({ product: productId, quantity: 1 });
+      existingProductInCart !== -1
+        ? cart.products[existingProductInCart].quantity++
+        : cart.products.push({ product: pid, quantity: 1 });
+
       await cart.save();
     } catch (error) {
       throw error;
@@ -55,44 +54,43 @@ class CartManagerMongo {
 
   async finishPurchase(data) {
     try {
-      const newOrder = await ticketManager.createTicket({
+      const newOrder = await ticketsManager.createOrder({
         amount: data.amount,
         purchaser: data.purchaser,
       });
       return {
         purchaser: newOrder.purchaser,
+        productosSinSuficienteStock: data.productosSinSuficienteStock,
         amount: newOrder.amount,
-        productsOutStock: data.productsOutStock,
       };
     } catch (error) {
       throw error;
     }
   }
 
-  async updateCartProducts(cartId, productsOutStock) {
-    const cart = await this.model.findById(cartId);
-    if (!cart) {
-      throw new Error(`Cart ${cartId} not found`);
-    }
+  async updateCartProducts(cid, productsIdsWithoutStock) {
+    const cart = await this.model.findById(cid);
+    if (!cart) throw new Error("Cart not found");
     try {
       const currentProducts = cart.products;
 
       const filteredProducts = currentProducts.filter((product) =>
-        productsOutStock.includes(product.product._id.toString())
+        productsIdsWithoutStock.includes(product.product.toString())
       );
+
       await this.model.updateOne(
-        { _id: cartId },
-        { products: filteredProducts }
+        { _id: cid },
+        { $set: { products: filteredProducts } }
       );
     } catch (error) {
       throw error;
     }
   }
 
-  async updateCartProduct(cartId, productId, quantity) {
+  async updateCartProduct(cid, pid, quantity) {
     try {
       await this.model.updateOne(
-        { _id: cartId, "products.product": productId },
+        { _id: cid, "products.product": pid },
         { $set: { "products.$.quantity": quantity } }
       );
     } catch (error) {
@@ -100,29 +98,29 @@ class CartManagerMongo {
     }
   }
 
-  async deleteCartProduct(cartId, productId) {
+  async deleteProductFromCart(cid, pid) {
     try {
       await this.model.updateOne(
-        { _id: cartId },
-        { $pull: { products: { product: productId } } }
+        { _id: cid },
+        { $pull: { products: { product: pid } } }
       );
     } catch (error) {
       throw error;
     }
   }
 
-  async deleteCartProducts(cartId) {
+  async deleteProductsFromCart(cid) {
     try {
-      await this.model.updateOne({ _id: cartId }, { $set: { products: [] } });
+      await this.model.updateOne({ _id: cid }, { $set: { products: [] } });
     } catch (error) {
       throw error;
     }
   }
 
-  async deleteCart(cartId) {
+  async deleteCart(cid) {
     try {
-      await this.getCartById(cartId);
-      await this.model.deleteOne({ _id: cartId });
+      await this.getCartById(cid);
+      await this.model.deleteOne({ _id: cid });
     } catch (error) {
       throw error;
     }

@@ -1,16 +1,16 @@
-const userDaoMongo = require("../dao/mongo/user.manager.mongo");
+const usersDAOMongo = require("../dao/mongo/user.manager.mongo");
 
-const mapperStorage = {
-  mongo: new userDaoMongo(),
-  default: new userDaoMongo(),
+const storageMapper = {
+  mongo: () => new usersDAOMongo(),
+  default: () => new usersDAOMongo(),
 };
 
-const getUsersDao = (storage) => {
-  const storageFn = mapperStorage[storage] || mapperStorage.default;
+const getUsersDAO = (storage) => {
+  const storageFn = storageMapper[storage] || storageMapper.default;
 
   const dao = storageFn();
 
   return dao;
 };
 
-module.exports = { getUsersDao };
+module.exports = { getUsersDAO };

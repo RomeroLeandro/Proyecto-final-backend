@@ -1,4 +1,4 @@
-class productDto {
+class ProductsDTO {
   constructor(products) {
     this.products = products.docs;
     this.page = products.page;
@@ -8,8 +8,8 @@ class productDto {
     this.hasPrevPage = products.hasPrevPage;
     this.hasNextPage = products.hasNextPage;
     this.prevLink = products.prevPage;
-    this.nextLink = products.nextPage;
+    this.nextLink = products.nextPag;
   }
 }
 
-module.exports = productDto;
+module.exports = ProductsDTO;

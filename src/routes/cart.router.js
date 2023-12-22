@@ -1,12 +1,39 @@
-const express = require('express');
-const cartRouter = express.Router();
-const cartController = require('../controllers/cart.controller');
+const CartsController = require("../controllers/cart.controller");
+const cartsController = new CartsController();
+const BaseRouter = require("./base.router");
+const passportCall = require("../utils/passport.call");
+class CartsRouter extends BaseRouter {
+  init() {
+    this.get("/", cartsController.getCarts.bind(cartsController));
+    this.get("/:cid", cartsController.getCartById.bind(cartsController));
+    this.post("/", cartsController.addCart.bind(cartsController));
+    this.post(
+      "/:cid/products/:pid",
+      cartsController.addProductToCart.bind(cartsController)
+    );
+    this.post(
+      "/:cid/purchase",
+      passportCall("jwt"),
+      cartsController.finishPurchase.bind(cartsController)
+    );
+    this.put("/:cid", cartsController.updateCartProducts.bind(cartsController));
+    this.put(
+      "/:cid/products/:pid",
+      cartsController.updateCartProduct.bind(cartsController)
+    );
+    this.delete(
+      "/:cid/products/:pid",
+      cartsController.deleteProductFromCart.bind(cartsController)
+    );
+    this.delete(
+      "/:cid",
+      cartsController.deleteProductsFromCart.bind(cartsController)
+    );
+    this.delete(
+      "/delete/:cid",
+      cartsController.deleteCart.bind(cartsController)
+    );
+  }
+}
 
-cartRouter.get('/', cartController.getAllCarts);
-cartRouter.get('/:id', cartController.getCartById);
-cartRouter.post('/', cartController.createCart);
-cartRouter.put('/:id', cartController.updateCart);
-cartRouter.delete('/:id', cartController.deleteCart);
-cartRouter.post('/:id/products/:pid', cartController.addProductToCart);
-
-module.exports = cartRouter;
+module.exports = CartsRouter;

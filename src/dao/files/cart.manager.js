@@ -33,13 +33,12 @@ class CartManager {
         );
         return [];
       }
-
       const data = await fs.promises.readFile(this.path, "utf-8");
       this.carts = JSON.parse(data);
       return this.carts;
     } catch (error) {
       this.carts = [];
-      throw error;
+      return this.carts;
     }
   }
 
@@ -48,7 +47,7 @@ class CartManager {
       await this.getCarts();
       const cart = this.carts.find((cart) => cart.id === id);
       if (!cart) {
-        throw new Error(`Cart with id ${id} not found`);
+        throw new Error("No se encuentra el carrito");
       }
       return cart;
     } catch (error) {
@@ -56,43 +55,44 @@ class CartManager {
     }
   }
 
-  async cartsLoad() {
+  //Permite acceder a la información del inventario en products.json
+  async loadInventory() {
     try {
-      const dataProducts = await fs.promises.readFile(
-        "./src/data/products.json",
+      const productsData = await fs.promises.readFile(
+        "./src/db/products.json",
         "utf-8"
       );
-      const products = JSON.parse(dataProducts);
+      const products = JSON.parse(productsData);
       return products;
     } catch (error) {
       throw error;
     }
   }
 
-  async addProductToCart(id, product) {
+  async addProductToCart(cartId, productId) {
     try {
-      const cart = await this.getCartById(id);
-      const products = await this.productsLoad();
-      const productFound = products.find((prod) => prod.id === product.id);
-      if (!productFound) {
-        throw new Error(`Product with id ${product.id} not found`);
+      const cart = await this.getCartById(cartId);
+      const products = await this.loadInventory();
+      const product = products.find((p) => p.id === productId);
+
+      if (!product) {
+        throw new Error(`No figura en nuestro inventario ese producto`);
       }
 
-      const productAdd = {
-        product: productFound.id,
+      const productToAdd = {
+        product: product.id,
         quantity: 1,
       };
 
-      const productInCart = cart.products.find(
-        (prod) => prod.product === productFound.id
+      const existingProductInCart = cart.products.findIndex(
+        (p) => p.product === productId
       );
-
-      productInCart !== -1
-        ? cart.products[productInCart].quantity++
-        : cart.products.push(productAdd);
+      //si el índice encontrado es distinto a menos uno entonces existe
+      existingProductInCart !== -1
+        ? cart.products[existingProductInCart].quantity++
+        : cart.products.push(productToAdd);
 
       cart.products.sort((a, b) => a.product - b.product);
-
       await fs.promises.writeFile(
         this.path,
         JSON.stringify(this.carts, null, 2)

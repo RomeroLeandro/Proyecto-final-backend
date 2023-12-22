@@ -1,24 +1,23 @@
 const productModel = require("./models/product.model");
-const productDto = require("../dto/product.dto");
-
-class productManagerMongo {
+const ProductsDto = require("../dto/product.dto");
+class ProductManagerMongo {
   constructor() {
-    this.productModel = productModel;
+    this.model = productModel;
   }
 
   async getProducts(filters, query) {
     try {
       const products = await this.model.paginate(filters, query);
-      const results = new productDto(products);
-      return results;
+      const result = new ProductsDto(products);
+      return result;
     } catch (error) {
       throw error;
     }
   }
 
-  async getProductById(id) {
+  async getProductById(pid) {
     try {
-      const product = await this.model.findById(id);
+      const product = await this.model.findById(pid);
       if (product) {
         return product.toObject();
       }
@@ -30,9 +29,7 @@ class productManagerMongo {
   async getProductByCode(code) {
     try {
       const product = await this.model.findOne({ code: code });
-      if (product) {
-        return product.toObject();
-      }
+      return product;
     } catch (error) {
       throw error;
     }
@@ -42,20 +39,20 @@ class productManagerMongo {
     let owner;
 
     try {
-      if (data.userId === process.env.ADMIN_ID || data.userId) {
-        owner = "admin";
+      if (data.userId === process.env.ADMIN_ID || !data.userId) {
+        owner = "ADMIN";
       } else {
         owner = data.userId || data.uid;
       }
-      const newProduct = new this.model.create({
+      const newProduct = await this.model.create({
         title: data.title,
         description: data.description,
         code: data.code,
-        price: parceFloat(data.price),
+        price: parseFloat(data.price),
         status: data.status,
         stock: data.stock,
         category: data.category,
-        thumbnail: data.thumbnail || [],
+        thumbnails: data.thumbnails || [],
         owner: owner,
       });
       return newProduct;
@@ -64,28 +61,28 @@ class productManagerMongo {
     }
   }
 
-  async updateProduct(id, data) {
+  async updateProduct(pid, productData) {
     try {
-      const product = await this.model.getProductById(id);
-      const updateProduct = {
+      const product = await this.getProductById(pid);
+      const productUpdated = {
         ...product,
-        ...data,
+        ...productData,
       };
-      updateProduct._id = product._id;
-      await this.model.updateOne({ _id: id }, updateProduct);
-      return updateProduct;
+      productUpdated._id = product._id;
+      await this.model.updateOne({ _id: pid }, productUpdated);
+      return productUpdated;
     } catch (error) {
       throw error;
     }
   }
 
-  async deleteProduct(id) {
+  async deleteProduct(pid) {
     try {
-      await this.model.deleteOne({ _id: id });
+      await this.model.deleteOne({ _id: pid });
     } catch (error) {
       throw error;
     }
   }
 }
 
-module.exports = productManagerMongo;
+module.exports = ProductManagerMongo;

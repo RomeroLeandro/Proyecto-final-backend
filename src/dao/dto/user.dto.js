@@ -1,8 +1,8 @@
-class userDto {
-  constructor(name, last_name, age) {
-    this.full_name = `${name} ${last_name}`;
+class UserDTO {
+  constructor(first_name, last_name, age) {
+    this.fullName = `${first_name}${last_name}`;
     this.age = age;
   }
 }
 
-module.exports = userDto;
+module.exports = UserDTO;

@@ -1,54 +1,60 @@
-const { getUsersDao } = require("../factories/user.dao.factory");
-const UserDto = require("../dao/dto/users.dto");
+const { getUsersDAO } = require("../factories/user.dao.factory");
+const UsersDTO = require("../dao/dto/users.dto");
 
-class userRepository {
+class UsersRepository {
   constructor() {
-    this.userDao = getUsersDao(process.env.STORAGE);
+    this.dao = getUsersDAO(process.env.STORAGE);
   }
 
   async getUsers(params) {
-    const users = await this.userDao.getUsers(params);
-    if (user.length === 0) throw new Error("Users not found");
-    const usersDto = new UserDto(users);
+    const users = await this.dao.getUsers(params);
 
-    return usersDto.users;
+    if (users.length === 0) throw new Error("No users in database");
+
+    const usersDTO = new UsersDTO(users);
+
+    return usersDTO.users;
   }
 
-  async getUserById(id) {
-    return this.userDao.getUserById(id);
+  async getUserById(uid) {
+    return this.dao.getUserById(uid);
   }
 
   async getUserByFilter(filter) {
-    return this.userDao.getUserByFilter(filter);
+    return this.dao.getUserByFilter(filter);
   }
 
-  async addToMyCart(userId, productId) {
-    return this.userDao.addToMyCart(userId, productId);
+  async addToMyCart(uid, pid) {
+    return this.dao.addToMyCart(uid, pid);
   }
 
   async createUser(data) {
-    return this.userDao.createUser(data);
+    return this.dao.createUser(data);
   }
 
-  async resetPassword(userId, password) {
-    return this.userDao.resetPassword(userId, password);
+  async resetPassword(uid, password) {
+    return this.dao.resetPassword(uid, password);
   }
 
-  async updateUserRole(userId, newRole) {
-    return this.userDao.updateUserRole(userId, newRole);
+  async updateUserRole(uid, newRole) {
+    return this.dao.updateUserRole(uid, newRole);
   }
 
   async updateUserLastConnection(user) {
-    return this.userDao.updateUserLastConnection(user);
+    return this.dao.updateUserLastConnection(user);
   }
 
-  async deleteUser(userId) {
-    return this.userDao.deleteUser(userId);
+  async updateUserDocuments(uid, documentsToUpload) {
+    return this.dao.updateUserDocuments(uid, documentsToUpload);
+  }
+
+  async deleteUser(uid) {
+    return this.dao.deleteUser(uid);
   }
 
   async deleteInactiveUsers(usersToDelete) {
-    return this.userDao.deleteInactiveUsers(usersToDelete);
+    return this.dao.deleteInactiveUsers(usersToDelete);
   }
 }
 
-module.exports = userRepository;
+module.exports = UsersRepository;

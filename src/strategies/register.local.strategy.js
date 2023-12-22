@@ -1,26 +1,28 @@
-const passportLocal = require("passport-local");
+const local = require("passport-local");
 const UsersRepository = require("../repositories/user.repository");
 const usersRepository = new UsersRepository();
 
-const LocalStrategy = passportLocal.Strategy;
+const LocalStrategy = local.Strategy;
 
 const registerLocalStrategy = new LocalStrategy(
   { passReqToCallback: true, usernameField: "email" },
-  async (req, email, password, done) => {
-    const { name, last_name, age, email } = req.body;
+  async (req, username, password, done) => {
+    const { first_name, last_name, age, email } = req.body;
 
     try {
       let user = await usersRepository.getUserByFilter({ email: username });
 
       if (user) {
-        return done(null, false, { message: "Email already exists" });
+        return done(null, false, {
+          message: "There is already a user with that email",
+        });
       }
 
-      if (!name || !last_name || !age || !email) {
+      if (!first_name || !last_name || !age || !password || !email) {
         return done(null, false, { message: "All fields are required" });
       }
 
-      let newUser = { name, last_name, age, email, password };
+      let newUser = { first_name, last_name, email, age, password };
 
       let result = await usersRepository.createUser(newUser);
 

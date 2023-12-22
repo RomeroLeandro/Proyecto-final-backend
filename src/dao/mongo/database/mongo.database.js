@@ -1,27 +1,28 @@
 const mongoose = require("mongoose");
 
-class MongoDatabase {
+class MongoSingleton {
   static instance;
-  static CONNECT_MONGO_DB;
+  static MONGODB_CONNECT;
   constructor(settings) {
-    MongoDatabase.CONNECT_MONGO_DB = `mongodb+srv://${setting.mongoUser}:${settings.mongoPassword}@${settings.mongoHost}/${settings.mongoName}?retryWrites=true&w=majority`;
-    mongoose.connect(MongoDatabase.CONNECT_MONGO_DB, {
+    MongoSingleton.MONGODB_CONNECT = `mongodb+srv://${settings.mongoDbUser}:${settings.mongoDbPassword}@${settings.mongoDbHost}/${settings.mongoDbName}?retryWrites=true&w=majority`;
+    mongoose.connect(MongoSingleton.MONGODB_CONNECT, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
   }
 
-  static getInstance(settings) {
+  static getConnection(settings) {
     if (this.instance) {
-      console.log("instance exists");
+      console.log("Ya existe una conexión a la base de datos");
+
       return this.instance;
     }
-    this.instance = new MongoDatabase(settings);
-    console.log(
-      `new instance created, connection to database in ${settings.mongoName}`
-    );
+
+    this.instance = new MongoSingleton(settings);
+    console.log(`Conectado a la base de datos ${settings.mongoDbName}`);
+
     return this.instance;
   }
 }
 
-module.exports = MongoDatabase;
+module.exports = MongoSingleton;

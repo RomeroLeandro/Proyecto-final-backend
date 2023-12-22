@@ -4,10 +4,9 @@ const dotenv = require("dotenv");
 
 const program = new Command();
 
-program.option("--mode <mode>", "prod", "dev");
+program.option("--mode <mode>", "Work Mode", "dev");
 
 program.parse();
-
 const options = program.opts();
 
 dotenv.config({

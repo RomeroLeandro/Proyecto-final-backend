@@ -1,8 +1,8 @@
-const { getCartsDao } = require("../factories/cart.dao.factory");
+const { getCartsDAO } = require("../factories/cart.dao.factory");
 
-class CartRepository {
+class CartsRepository {
   constructor() {
-    this.dao = getCartsDao(process.env.STORAGE);
+    this.dao = getCartsDAO(process.env.STORAGE);
   }
 
   async getCarts() {
@@ -17,33 +17,33 @@ class CartRepository {
     return this.dao.addCart();
   }
 
-  async addProductToCart(cartId, productId, userId) {
-    return this.dao.addProductToCart(cartId, productId, userId);
+  async addProductToCart(cid, pid, userId) {
+    return this.dao.addProductToCart(cid, pid, userId);
   }
 
   async finishPurchase(data) {
     return this.dao.finishPurchase(data);
   }
 
-  async updateCartProducts(cartId, productsOutStock) {
-    return this.dao.updateCartProducts(cartId, productsOutStock);
+  async updateCartProducts(cid, productsIdsWithoutStock) {
+    return this.dao.updateCartProducts(cid, productsIdsWithoutStock);
   }
 
-  async updateCartProduct(cartId, productId, quantity) {
-    return this.dao.updateCartProduct(cartId, productId, quantity);
+  async updateCartProduct(cid, pid, quantity) {
+    return this.dao.updateCartProduct(cid, pid, quantity);
   }
 
-  async deleteCartProduct(cartId, productId) {
-    return this.dao.deleteCartProduct(cartId, productId);
+  async deleteProductFromCart(cid, pid) {
+    return this.dao.deleteProductFromCart(cid, pid);
   }
 
-  async deleteCartProducts(cartId) {
-    return this.dao.deleteCartProducts(cartId);
+  async deleteProductsFromCart(cid) {
+    return this.dao.deleteProductsFromCart(cid);
   }
 
-  async deleteCart(cartId) {
-    return this.dao.deleteCart(cartId);
+  async deleteCart(cid) {
+    return this.dao.deleteCart(cid);
   }
 }
 
-module.exports = CartRepository;
+module.exports = CartsRepository;
