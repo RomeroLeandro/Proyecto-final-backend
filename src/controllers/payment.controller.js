@@ -12,6 +12,7 @@ class PaymentsController {
     const user = req.user;
     try {
       const paymentIntent = await this.service.createPaymentIntent(user);
+      return res.sendSuccess(200, paymentIntent);
     } catch (error) {
       return res.sendError(500, "Internal server error", error.message);
     }
@@ -35,9 +36,18 @@ class PaymentsController {
         productosSinSuficienteStock,
       });
 
-      return res.sendSuccess(200, "Pago confirmado");
+      return res.sendSuccess(200, "Successful payment");
     } catch (error) {
-      console.log(error);
+      res.sendError(500, "Internal Server error", error.message);
+    }
+  }
+
+  async cancelPayment(req, res) {
+    const { paymentIntentId } = req.body;
+    try {
+      await this.service.cancelPayment(paymentIntentId);
+      return res.sendSuccess(200, "Successful payment cancellation");
+    } catch (error) {
       res.sendError(500, "Internal Server error", error.message);
     }
   }

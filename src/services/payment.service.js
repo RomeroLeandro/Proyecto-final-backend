@@ -1,7 +1,7 @@
 const Stripe = require("stripe");
 const CartsService = require("../services/cart.service");
 const cartsService = new CartsService();
-
+let stockBackup;
 class PaymentsService {
   constructor() {
     this.stripe = new Stripe(process.env.STRIPE_KEY);
@@ -13,6 +13,7 @@ class PaymentsService {
         amountTotal,
         filteredProductsWithStock,
         productosSinSuficienteStock,
+        stockBackup,
       } = await cartsService.processCartProducts(user.cart);
 
       if (!filteredProductsWithStock) {
@@ -37,6 +38,7 @@ class PaymentsService {
             null,
             "\t"
           ),
+          stockBackup: JSON.stringify(stockBackup),
         },
       };
 
@@ -56,12 +58,43 @@ class PaymentsService {
         paymentIntentId,
         {
           payment_method: "pm_card_visa",
-          return_url: "https://localhost:8080/home",
+          return_url: `${process.env.BASE_URL}/home`,
         }
       );
+
+      stockBackup = JSON.parse(paymentIntent.metadata.stockBackup);
+
       return paymentIntent;
     } catch (error) {
-      console.log(error.message);
+      if (error) {
+        await this.restoreStock(stockBackup);
+      }
+
+      throw error;
+    }
+  }
+
+  async cancelPayment(paymentIntentId) {
+    try {
+      const paymentIntentCancel = await this.stripe.paymentIntents.cancel(
+        paymentIntentId
+      );
+
+      stockBackup = JSON.parse(paymentIntentCancel.metadata.stockBackup);
+      await this.restoreStock(stockBackup);
+      return paymentIntentCancel;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async restoreStock(productsData) {
+    try {
+      for (const { pid, originalStock } of productsData) {
+        const stockToUpdate = { stock: originalStock };
+        await productsService.updateProduct(pid, stockToUpdate);
+      }
+    } catch (error) {
       throw error;
     }
   }

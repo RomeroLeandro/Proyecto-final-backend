@@ -62,16 +62,16 @@ class UsersController {
         userId: user._id,
       });
 
-      const resetLink = `http://localhost:${process.env.PORT}/password/reset/${token}`;
+      const resetLink = `${process.env.BASE_URL}/password/reset/${token}`;
 
       await transportGmail.sendMail({
         from: `Shop Easy < ${process.env.EMAIL_USER}>`,
         to: user.email,
         subject: "Password Recovery",
         html: `<div>
-                            <h1>Password Recovery</h1>
-                            <button><a href="${resetLink}">Reset Password</a></button>
-                        </div>`,
+                          <h1>Password Recovery</h1>
+                          <button><a href="${resetLink}">Reset Password</a></button>
+                      </div>`,
         attachments: [],
       });
 

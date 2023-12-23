@@ -6,6 +6,10 @@ const BaseRouter = require("./base.router");
 class PaymentsRouter extends BaseRouter {
   init() {
     this.post(
+      "/cancel-payment",
+      paymentsController.cancelPayment.bind(paymentsController)
+    );
+    this.post(
       "/payment-intents",
       passportCall("jwt"),
       paymentsController.createPaymentIntent.bind(paymentsController)
