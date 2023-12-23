@@ -4,7 +4,7 @@ class MongoSingleton {
   static instance;
   static MONGODB_CONNECT;
   constructor(settings) {
-    MongoSingleton.MONGODB_CONNECT = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_HOST}/${process.env.MONGODB_NAME}?retryWrites=true&w=majority`;
+    MongoSingleton.MONGODB_CONNECT = `mongodb+srv://${settings.mongoDbUser}:${settings.mongoDbPassword}@${settings.mongoDbHost}/${settings.mongoDbName}?retryWrites=true&w=majority`;
     mongoose.connect(MongoSingleton.MONGODB_CONNECT, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
