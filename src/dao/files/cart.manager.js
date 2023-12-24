@@ -59,7 +59,7 @@ class CartManager {
   async loadInventory() {
     try {
       const productsData = await fs.promises.readFile(
-        "./src/db/products.json",
+        "./src/products.json",
         "utf-8"
       );
       const products = JSON.parse(productsData);

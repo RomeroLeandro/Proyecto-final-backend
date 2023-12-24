@@ -1,5 +1,5 @@
 const stripe = Stripe(
-  "pk_test_51OHEQcL5yhmfRCDnIJVEcALqA2dfhrTmoLRrWBFsI6e8Od5F7wHp7rq4xc9IyiDftRvjjuZJX7DJtZvUri6MYfH900s5geY9b0"
+  "pk_test_51OQWNKHZQhg74K7KqL3Slcla0C9okcFJVI5c3alo4yKZBhUQPJx0bboijiBDr5Cc6CvBJ3Ilwf1lxZIaFH4Rxjri006hXgy3wd"
 );
 const savedPaymentIntentId = localStorage.getItem("paymentIntentId");
 const paymentSubmitButton = document.getElementById("submit-payment");

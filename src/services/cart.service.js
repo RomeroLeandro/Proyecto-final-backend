@@ -45,13 +45,14 @@ class CartsService {
       if (userId === product.owner)
         throw new Error("You are the owner of this product");
 
-      if (!userId || userId === "1")
+      if (!userId || userId === process.env.ADMIN_ID)
         throw new Error(
           "The users with the role ADMIN cannot add products to carts."
         );
 
       return this.repository.addProductToCart(cid, pid);
     } catch (error) {
+      console.log(error);
       throw error;
     }
   }
@@ -59,6 +60,7 @@ class CartsService {
   async processCartProducts(data) {
     let amountTotal = 0;
     let productosSinSuficienteStock = [];
+    let stockBackup = [];
 
     try {
       const cart = await this.repository.getCartById(data);
@@ -73,6 +75,7 @@ class CartsService {
           throw new Error(`Product not found: ${productData.product.title}`);
 
         if (product.stock >= productData.quantity) {
+          stockBackup.push({ pid: product._id, originalStock: product.stock });
           const productTotal = product.price * productData.quantity;
           amountTotal += productTotal;
           product.stock -= productData.quantity;
@@ -87,7 +90,6 @@ class CartsService {
       if (productosSinSuficienteStock.length === cart[0].products.length) {
         throw new Error("All products in the cart do not have enough stock.");
       }
-
       const filteredProductsWithStock = cart[0].products.filter(
         (productData) => {
           return !productosSinSuficienteStock.some((id) =>
@@ -100,6 +102,7 @@ class CartsService {
         filteredProductsWithStock,
         amountTotal,
         productosSinSuficienteStock,
+        stockBackup,
       };
     } catch (error) {
       throw error;
@@ -128,7 +131,10 @@ class CartsService {
         productsIdsWithoutStock = [productosSinSuficienteStock];
       }
 
-      await this.sendPurchaseEmail(user.email, order);
+      if (user.email) {
+        await this.sendPurchaseEmail(user.email, order);
+      }
+
       await this.repository.updateCartProducts(
         user.cart,
         productsIdsWithoutStock

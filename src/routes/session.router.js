@@ -36,10 +36,6 @@ class SessionRouter extends BaseRouter {
       passport.authenticate("github", { session: false }),
       (req, res) => {
         const token = req.user.token;
-        console.log(
-          "URL de retorno:",
-          `${process.env.BASE_URL}/api/sessions/github-callback`
-        );
 
         return res
           .cookie("authTokenCookie", token, {

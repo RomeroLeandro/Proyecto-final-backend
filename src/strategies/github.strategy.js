@@ -3,20 +3,11 @@ const UsersRepository = require("../repositories/user.repository");
 const usersRepository = new UsersRepository();
 const { generateToken } = require("../utils/jwt");
 
-const callbackURLDev = "http://localhost:8080/api/sessions/github-callback";
-
-// Configuración para producción (cambia a tu URL de producción)
-const callbackURLProd =
-  "https://shopeasy.up.railway.app/api/sessions/github-callback";
-
-const callbackURL =
-  process.env.ENVIRONMENT === "production" ? callbackURLProd : callbackURLDev;
-
 const githubStrategy = new GithubSt(
   {
-    clientID: process.env.CLIENT_ID,
-    clientSecret: process.env.CLIENT_SECRET,
-    callbackUrl: callbackURL,
+    clientID: process.env.GITHUB_CLIENT_ID,
+    clientSecret: process.env.GITHUB_CLIENT_SECRET,
+    callbackUrl: `${process.env.BASE_URL}/api/sessions/github-callback`,
   },
   async (accessToken, refreshToken, profile, done) => {
     try {

@@ -47,10 +47,7 @@ class ProductManager {
         throw new Error(`Ya existe un producto con el código '${data.code}'`);
       }
 
-      const newId = {
-        id: this.products.length + 1,
-        ...data,
-      };
+      const newId = generateId();
 
       const newProduct = {
         id: newId,

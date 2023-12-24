@@ -1,6 +1,6 @@
+const { transportGmail } = require("../config/node.mailer");
 const UsersService = require("../services/user.service");
 const { generateToken, verifyToken } = require("../utils/jwt");
-
 class UsersController {
   constructor() {
     this.service = new UsersService();
@@ -69,9 +69,9 @@ class UsersController {
         to: user.email,
         subject: "Password Recovery",
         html: `<div>
-                          <h1>Password Recovery</h1>
-                          <button><a href="${resetLink}">Reset Password</a></button>
-                      </div>`,
+                            <h1>Password Recovery</h1>
+                            <button><a href="${resetLink}">Reset Password</a></button>
+                        </div>`,
         attachments: [],
       });
 

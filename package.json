@@ -4,8 +4,8 @@
   "description": "A backend app with express, with a crud of products, with a database in mongo db",
   "main": "server.js",
   "scripts": {
-    "start": "node src/app.js --mode prod",
-    "dev": "nodemon src/app.js --mode dev",
+    "start": "node src/server.js --mode prod",
+    "dev": "nodemon src/server.js --mode dev",
     "test": "mocha test/supertest.test.js --timeout 5000"
   },
   "dependencies": {

@@ -180,7 +180,7 @@ class ViewsRouter extends BaseRouter {
             });
           } else {
             res.renderView({
-              view: "productsAndCartViews/cartDetail",
+              view: "products-cart/cartDetail",
               locals: {
                 title: "Cart Detail",
                 productsInCart,

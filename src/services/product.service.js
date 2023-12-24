@@ -43,6 +43,8 @@ class ProductsService {
   }
 
   async updateProduct(pid, productData, userId) {
+    console.log(productData);
+    console.log(pid);
     const product = await this.repository.getProductById(pid);
 
     if (!product) {
@@ -79,7 +81,7 @@ class ProductsService {
 
       if (product.owner !== "ADMIN") {
         const ownerUser = await usersRepository.getUserById(product.owner);
-        if (ownerUser && ownerUser.role === "PREMIUM") {
+        if (ownerUser && ownerUser.role === "PREMIUM" && ownerUser.email) {
           await transportGmail.sendMail({
             from: `Shop Ease <${process.env.EMAIL_USER}>`,
             to: ownerUser.email,

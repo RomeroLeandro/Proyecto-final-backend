@@ -1,20 +1,17 @@
+const first_name_input = document.getElementById("first_name");
+const last_name_input = document.getElementById("last_name");
+const email_input = document.getElementById("email");
+const age_input = document.getElementById("age");
+const password_input = document.getElementById("password");
+const registerButton = document.getElementById("registerButton");
+
 registerButton.addEventListener("click", async (e) => {
   e.preventDefault();
-
-  console.log("Botón de registro clicado");
-
   const first_name = first_name_input.value;
   const last_name = last_name_input.value;
   const email = email_input.value;
   const age = age_input.value;
   const password = password_input.value;
-
-  console.log("Datos del formulario:");
-  console.log("Nombre:", first_name);
-  console.log("Apellido:", last_name);
-  console.log("Email:", email);
-  console.log("Edad:", age);
-  console.log("Contraseña:", password);
 
   const response = await fetch("/api/sessions/register", {
     credentials: "include",
@@ -31,12 +28,7 @@ registerButton.addEventListener("click", async (e) => {
     },
   });
 
-  console.log("Solicitud fetch enviada al servidor");
-
   const data = await response.json();
-
-  console.log("Respuesta del servidor:");
-  console.log(data);
 
   if (response.ok) {
     Swal.fire({

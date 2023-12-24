@@ -1,6 +1,8 @@
 const Stripe = require("stripe");
 const CartsService = require("../services/cart.service");
 const cartsService = new CartsService();
+const ProductsService = require("../services/product.service");
+const productsService = new ProductsService();
 let stockBackup;
 class PaymentsService {
   constructor() {
