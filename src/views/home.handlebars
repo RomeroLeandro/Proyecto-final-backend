@@ -1,41 +1,56 @@
-<header class="navBar">
-  <a href="/profile"><img
-      src="/img/usuario.png"
-      alt="Imagen de perfil"
-      class="navImg"
-    /></a>
-  <div>
-    <p>Welcome
-      <span class="bold">{{user.first_name}}
-        {{#if user.last_name}}{{user.last_name}}{{/if}}</span>!</p>
-    {{#if user.email}}
-      <p><span class="bold">Email: </span>{{user.email}}</p>
-    {{/if}}
-    <p><span class="bold">Role: </span>{{user.role}}</p>
-  </div>
-  <a href="/logout"><img
-      src="/img/logout.png"
-      alt="Icono para cierre de sesión"
-      class="navImg"
-    /></a>
-</header>
-
+{{>header}}
 <section class="homeSection">
-  <h1>SHOP EASY - CODERHOUSE</h1>
-  <img src="/img/grow-shop.png" alt="Descripción de la imagen" />
-  <div>
+  <h1 class="titleHome">DIXER GAMING</h1>
+  <div class="containerHome">
     {{#if roles.adminRole}}
-      <a href="/realtimeproducts" class="bold">🔗 Inventory</a>
-      <a href="/users" class="bold">🔗 Users</a>
+    <div class="card">
+      <p class="heading">Users</p>
+      <p class="para"> Profile management and access privilege control on the platform.
+      </p><div class="overlay"></div>
+      <a href="/users" class="card-btn">Click</a>
+    </div>
+    <div class="card">
+      <p class="heading">Inventory</p>
+      <p class="para"> Stock control and tracking of stored products.
+      </p><div class="overlay"></div>
+      <a class="card-btn" href="/realtimeproducts">Click</a>
+    </div>
     {{/if}}
     {{#if roles.premiumRole}}
-      <a href="/realtimeproducts" class="bold">🔗 Inventory</a>
-      <a href="/chat" class="bold">🔗 Chat</a>
-      <a href="/products" class="bold">🔗 View Products</a>
+    <div class="card">
+      <p class="heading">Chat</p>
+      <p class="para"> Instant communication for quick interactions and efficient collaboration.
+      </p><div class="overlay"></div>
+      <a class="card-btn" href="/chat">Click</a>
+    </div>
+      <div class="card">
+        <p class="heading">Products</p>
+        <p class="para"> Display and management of available item catalog.
+        </p><div class="overlay"></div>
+        <a class="card-btn" href="/products">Click</a>
+      </div>
+      <div class="card">
+        <p class="heading">Inventory</p>
+        <p class="para"> Stock control and tracking of stored products.
+        </p><div class="overlay"></div>
+        <a class="card-btn" href="/realtimeproducts">Click</a>
+      </div>
     {{/if}}
     {{#if roles.userRole}}
-      <a href="/chat" class="bold">🔗 Chat</a>
-      <a href="/products" class="bold">🔗 View Products</a>
+    <div class="card">
+      <p class="heading">Chat</p>
+      <p class="para"> Instant communication for quick interactions and efficient collaboration.
+      </p><div class="overlay"></div>
+      <a class="card-btn" href="/chat">Click</a>
+    </div>
+      <div class="card">
+        <p class="heading">Products</p>
+        <p class="para"> Display and management of available item catalog.
+        </p><div class="overlay"></div>
+        <a class="card-btn" href="/products">Click</a>
+      </div>
     {{/if}}
   </div>
+  
+  
 </section>
