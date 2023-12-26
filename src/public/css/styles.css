@@ -40,7 +40,7 @@
   display: flex;
   align-items: center;
   padding-left: 30px;
-  color: #00bfff;
+  color: #6864dc;
   background-color: #333;
 }
 
@@ -63,7 +63,7 @@
   width: 16px;
   border-radius: 50%;
   left: 0px;
-  background-color: #00bfff;
+  background-color: #6864dc;
 }
 
 .message,
@@ -78,11 +78,11 @@
 }
 
 .signin a:hover {
-  text-decoration: underline royalblue;
+  text-decoration: underline #6864dc;
 }
 
 .signin a {
-  color: #00bfff;
+  color: #6864dc;
   background-color: #333;
 }
 
@@ -109,7 +109,7 @@
 }
 
 .form label .input + span {
-  color: rgba(255, 255, 255, 0.5);
+  color: #6864dc;
   position: absolute;
   left: 10px;
   top: 0px;
@@ -117,7 +117,7 @@
   cursor: text;
   transition: 0.3s ease;
 
-  background-color: #333;
+  background-color: transparent;
 }
 
 .form label .input:placeholder-shown + span {
@@ -127,7 +127,7 @@
 
 .form label .input:focus + span,
 .form label .input:valid + span {
-  color: #00bfff;
+  color: #6864dc;
   top: 0px;
   font-size: 0.7em;
   font-weight: 600;
@@ -145,11 +145,40 @@
   color: #fff;
   font-size: 16px;
   transform: 0.3s ease;
-  background-color: #00bfff;
+  background-color: #6864dc;
+}
+
+.submitDelete {
+  border: none;
+  outline: none;
+  padding: 10px;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 16px;
+  transform: 0.3s ease;
+  background-color: red;
+}
+.submitUpdate {
+  border: none;
+  outline: none;
+  padding: 10px;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 16px;
+  transform: 0.3s ease;
+  background-color: green;
 }
 
 .submit:hover {
-  background-color: #00bfff96;
+  background-color: #14132d;
+}
+
+.submitDelete:hover {
+  background-color: darkred;
+}
+
+.submitUpdate:hover {
+  background-color: darkgreen;
 }
 
 @keyframes pulse {
@@ -207,14 +236,17 @@
 
 /* NAVBAR */
 .navBar {
+  width: 100%;
+  position: fixed;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  height: 8vh;
   background-color: #333;
   color: #ffffff;
   padding: 0 6rem;
+  box-shadow: 20px 10px 10px rgba(0, 0, 0, 0.5);
 }
 
 .navBar div {
@@ -407,7 +439,8 @@
   gap: 2rem;
 }
 
-.titleHome {
+.titleHome,
+.titleProfile {
   font-size: 11rem;
   font-weight: 600;
   letter-spacing: -1px;
@@ -418,4 +451,199 @@
   color: #6864dc;
   background-color: transparent;
   text-shadow: 5px 5px 8px rgba(0, 0, 0, 0.5); /* Agrega sombra */
+}
+
+.titleProfile {
+  font-size: 2rem;
+  padding: 0;
+}
+
+.containerProfile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100vh;
+  margin-top: 2rem;
+}
+
+.bold {
+  font-weight: 600;
+  background-color: transparent;
+}
+
+.textProfile {
+  font-size: 1.5rem;
+  background-color: transparent;
+}
+
+.table {
+  background-color: #333;
+}
+
+.pagination {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  align-items: center;
+}
+
+.pagination a {
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  background-color: #6864dc;
+  color: #fff;
+  text-decoration: none;
+}
+
+.pagination a:hover {
+  background-color: #14132d;
+}
+
+.cardProduct {
+  width: calc(33.33% - 100px);
+  height: 350px;
+  padding: 20px;
+  box-sizing: border-box;
+  position: relative;
+  overflow: visible;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  margin: 20px;
+  border-radius: 20px;
+  background-color: #333;
+  color: #fff;
+  border: 1px solid #333;
+}
+
+.card-img {
+  background-color: #ffcaa6;
+  height: 40%;
+  width: 100%;
+  border-radius: 0.5rem;
+  transition: 0.3s ease;
+}
+
+.card-info {
+  padding-top: 10%;
+  background-color: #333;
+  min-height: 100px;
+}
+
+svg {
+  width: 20px;
+  height: 20px;
+  background-color: transparent;
+}
+
+.card-footer {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 10px;
+  border-top: 1px solid #ddd;
+  background-color: #333;
+}
+
+/*Text*/
+.text-title {
+  font-weight: 900;
+  font-size: 1.2em;
+  background-color: #333;
+  color: #f5f5f5;
+}
+
+.text-body {
+  font-size: 0.9em;
+  padding-bottom: 10px;
+  background-color: #333;
+  color: #f5f5f5;
+}
+
+/*Button*/
+.card-button {
+  border: 1px solid #252525;
+  display: flex;
+  padding: 0.3em;
+  cursor: pointer;
+  border-radius: 50px;
+  transition: 0.3s ease-in-out;
+  background-color: #f5f5f5;
+  color: #252525;
+}
+
+/*Hover*/
+.card-img:hover {
+  transform: translateY(-25%);
+  box-shadow: rgba(226, 196, 63, 0.25) 0px 13px 47px -5px,
+    rgba(180, 71, 71, 0.3) 0px 8px 16px -8px;
+}
+
+.card-button:hover {
+  border: 1px solid #6864dc;
+  background-color: #6864dc;
+}
+
+.productsContainer {
+  padding-top: 5rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+}
+
+.productDetailContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding-top: 5rem;
+}
+
+.textDetail {
+  background-color: #333;
+}
+
+.bankData {
+  width: 100%;
+  padding-top: 5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.paymentButtons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  padding-top: 1rem;
+}
+
+#text {
+  background-color: #333;
+}
+
+.swal2-popup {
+  background-color: #555 !important; /* Fondo oscuro */
+  color: #fff !important; /* Texto blanco */
+}
+
+.swal2-title {
+  color: #fff !important; /* Color del título */
+}
+
+.swal2-content {
+  color: #fff !important; /* Color del contenido */
 }

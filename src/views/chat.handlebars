@@ -1,21 +1,25 @@
-<h1>Start Chatting</h1>
+{{> header}}
+<section style="display: flex; justify-content: center; align-items: center; flex-direction: column; padding-top: 5rem;">
+  <h1 class="titleProfile">Start Chatting</h1>
 
 <p id="notificationContainer"></p>
 
 <div class="inputContainer">
-  <label for="chatbox" class="labelChatBox">Chat Box
+  <label for="chatbox" class="labelChatBox">
     <input
+    class="input"
       type="text"
       id="chatbox"
-      placeholder="Press enter when you finished"
+      placeholder="Press enter message"
       name="chatbox"
     />
   </label>
 </div>
 
-<div class="messageContainer">
-  <p id="messageLogs"></p>
+<div class="form">
+  <p class="messageDiv" id="messageLogs"></p>
 </div>
+</section>
 
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="/socket.io/socket.io.js"></script>

@@ -4,17 +4,20 @@
       src="/img/favicon.ico"
       alt="Logo Dixer Gaming"
     /></a>
-  <div>
-    <p>Welcome
-      <span class="bold">{{user.first_name}}
+  <div style="background-color: #333;">
+    <p style="color: #6864dc; background-color: transparent;">Hi,
+      <span style="background-color: transparent;">{{user.first_name}}
         {{#if user.last_name}}{{user.last_name}}{{/if}}</span></p>
     {{#if user.email}}
-      <p><span class="bold">Email: </span>{{user.email}}</p>
+      <p style="color: #6864dc; background-color: transparent;">
+        ({{user.email}})</p>
     {{/if}}
-    <p><span class="bold">Role: </span>{{user.role}}</p>
+    <p style="color: #6864dc; background-color: transparent;">{{user.role}}</p>
   </div>
   <nav class="menu">
-    <ul>
+    <ul
+      style="display: flex; flex-direction: row; gap: 20px; background-color: #333;"
+    >
       <li style="display: flex; justify-content: center; align-items: center;">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -58,7 +61,7 @@
                 />
               </svg>
               View profile</a></li>
-          <li><a href="logout" style="color: red;"><svg
+          <li><a href="/logout" style="color: red;"><svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
                 height="16"
@@ -79,6 +82,19 @@
               Logout</a></li>
         </ul>
       </li>
+      <li>
+        <a href="/carts/{{user.cart}}"><svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-cart-fill"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"
+            />
+          </svg></a></li>
     </ul>
   </nav>
 </header>

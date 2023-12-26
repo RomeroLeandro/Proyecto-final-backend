@@ -166,7 +166,7 @@ class CartsService {
              </div>`;
 
       await transportGmail.sendMail({
-        from: `Shop Ease <${process.env.EMAIL_USER}>`,
+        from: `DIXER GAMER <${process.env.EMAIL_USER}>`,
         to: email,
         subject,
         html: htmlContent,

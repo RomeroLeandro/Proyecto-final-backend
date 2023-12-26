@@ -78,7 +78,7 @@ class ViewsRouter extends BaseRouter {
       authorizationMiddleware(["ADMIN", "USER", "PREMIUM"]),
       async (req, res) => {
         const user = req.user;
-        let title = "Shop Easy Coderhouse";
+        let title = "DIXER GAMING";
         let roles = [];
 
         if (user.role === "PREMIUM") {

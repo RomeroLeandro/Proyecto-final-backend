@@ -83,7 +83,7 @@ class ProductsService {
         const ownerUser = await usersRepository.getUserById(product.owner);
         if (ownerUser && ownerUser.role === "PREMIUM" && ownerUser.email) {
           await transportGmail.sendMail({
-            from: `Shop Ease <${process.env.EMAIL_USER}>`,
+            from: `DIXER GAMING <${process.env.EMAIL_USER}>`,
             to: ownerUser.email,
             subject: "Product Deletion Notification",
             html: `<div>

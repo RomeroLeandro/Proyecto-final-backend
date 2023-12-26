@@ -1,15 +1,27 @@
-<h2>USER PROFILE</h2>
-<section class="userProfileData">
-  <p>Welcome <span class="bold">{{user.first_name}}</span>!</p>
-  {{#if user.last_name}}
-    <p><span class="bold">Lastname: </span>{{user.last_name}}</p>{{/if}}
-  <p><span class="bold">Age: </span>{{user.age}}</p>
-  {{#if user.email}}
-    <p><span class="bold">Email: </span>{{user.email}}</p>
-  {{/if}}
-  <p><span class="bold">Role: </span>{{user.role}}</p>
-  <a href="/logout" class="logout">Logout</a>
-  <button class="deleteButton" data-userid="{{user.userId}}">Delete account</button>
+<section class="containerProfile">
+  <h2 class="titleProfile">Profile details</h2>
+  <div class="form userProfileData">
+    {{#if user.first_name}}
+      <p class="textProfile"><span class="bold">First name:
+        </span>{{user.first_name}}</p>{{/if}}
+    {{#if user.last_name}}
+      <p class="textProfile"><span class="bold">Last name:
+        </span>{{user.last_name}}</p>{{/if}}
+    <p class="textProfile"><span class="bold">Age: </span>{{user.age}}</p>
+    {{#if user.email}}
+      <p class="textProfile"><span class="bold">Email: </span>{{user.email}}</p>
+    {{/if}}
+    <p class="textProfile"><span class="bold">Role: </span>{{user.role}}</p>
+    <div
+      class="profileOptions"
+      style="background-color: #333; display: flex; justify-content: center; align-items: center;"
+    >
+      <a href="/logout" title="Logout" style="background-color: #333;"><button
+          class="submitDelete"
+        >Logout</button></a>
+    </div>
+
+  </div>
 </section>
 
 <script src="/js/login/profile.js"></script>

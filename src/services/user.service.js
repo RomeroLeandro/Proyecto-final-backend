@@ -117,7 +117,7 @@ class UsersService {
       for (const user of usersToDelete) {
         if (user.email) {
           await transportGmail.sendMail({
-            from: `Shop Easy <${process.env.EMAIL_USER}>`,
+            from: `DIXER GAMING <${process.env.EMAIL_USER}>`,
             to: user.email,
             subject: "Cuenta eliminada por inactividad",
             html: `<div>

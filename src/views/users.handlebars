@@ -1,55 +1,67 @@
-{{#if noUsers}}
-  <h1>No users in the database</h1>
-{{else}}
-  <h1>MANAGE USERS</h1>
-  <table class="table">
-    <tr>
-      <th>Name</th>
-      <th>Email</th>
-      <th>Role</th>
-      <th colspan="3">Options</th>
-    </tr>
-    {{#each users}}
-      <tr id="{{this.id}}">
-        <td>{{this.name}}</td>
-        <td>{{this.email}}</td>
-        <td><input
-            type="text"
-            name="title"
-            value="{{this.role}}"
-            contenteditable="true"
-          />
-        </td>
-        <td>
-          <button
-            class="button greenButton"
-            onclick="updateUserRole('{{this.id}}')"
-          >Edit</button>
-        </td>
-        <td>
-          <button
-            class="button redButton"
-            onclick="deleteUser('{{this.id}}')"
-          >Delete</button>
-        </td>
-        <td>
-          <input
-            type="file"
-            id="documents-{{this.id}}"
-            name="documents"
-            multiple
-          />
-          <br />
-          <button
-            class="button greenButton"
-            onclick="uploadDocuments('{{this.id}}')"
-          >Upload Documents</button>
-        </td>
+{{> header}}
+<section
+  style="display: flex; justify-content: center; flex-direction: column; align-items: center; padding-top: 5rem;"
+>
+  {{#if noUsers}}
+    <h1>No users in the database</h1>
+  {{else}}
+    <h1 class="titleProfile">MANAGE USERS</h1>
+    <table class="form">
+      <tr>
+        <th style="background-color: #333;">Name</th>
+        <th style="background-color: #333;">Email</th>
+        <th style="background-color: #333;">Role</th>
+        <th style="background-color: #333;" colspan="3">Options</th>
       </tr>
-    {{/each}}
-  </table>
-  <button class="button redButton" onclick="deleteInactiveUsers()">Delete
-    Inactive Users</button>
-{{/if}}
+      {{#each users}}
+        <tr id="{{this.id}}">
+          <td style="background-color: #333;">{{this.name}}</td>
+          <td style="background-color: #333;">{{this.email}}</td>
+          <td style="background-color: #333;"><input
+              style="background-color: #333; color: aliceblue;"
+              type="text"
+              name="title"
+              value="{{this.role}}"
+              contenteditable="true"
+            />
+          </td>
+          <td style="background-color: #333;">
+            <button
+              class="submit submitUpdate"
+              onclick="updateUserRole('{{this.id}}')"
+            >Edit</button>
+          </td>
+          <td style="background-color: #333;">
+            <button
+              class="submit submitDelete"
+              onclick="deleteUser('{{this.id}}')"
+            >Delete</button>
+          </td>
+          <td
+            style="display: flex; align-items: center; background-color: #333;"
+          >
+            <input
+              style="background-color: #333;"
+              type="file"
+              id="documents-{{this.id}}"
+              name="documents"
+              multiple
+            />
+            <br />
+            <button
+              class="submit"
+              onclick="uploadDocuments('{{this.id}}')"
+            >Upload</button>
+          </td>
+        </tr>
+      {{/each}}
+    </table>
+    <button
+      class="submit submitDelete"
+      style="margin-top: 2rem;"
+      onclick="deleteInactiveUsers()"
+    >Delete Inactive Users</button>
+  {{/if}}
+</section>
 
 <script src="/js/user.js"></script>
